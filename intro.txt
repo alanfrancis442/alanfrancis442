@@ -1,0 +1,12 @@
+$ whoami
+@user
+$ cat ./status
+  location ........ ██████████
+  occupation ...... renders light that shouldn't exist
+  current task .... teaching a fruit fly's brain to play football
+  sleep ........... not found
+$ ls ./experiments
+  flyball/    shaders/    neurons/    ████████/    do_not_open/
+$ cd do_not_open
+! access denied. not yet.
+$
