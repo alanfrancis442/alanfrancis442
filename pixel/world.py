@@ -233,21 +233,38 @@ def _grass_tile(d, x, y, rng):
         d.point([(px + 1, py)], fill=C["rock_l"])
 
 
+CLUMP = [                      # one leafy grass clump (8x8, original art)
+    ".oo..oo.",
+    "ohlooldo",
+    "olhmmldo",
+    ".olmmdo.",
+    "oolmmmdo",
+    "ohlmmmdo",
+    "odmmmddo",
+    ".oddddo.",
+]
+CLUMP_PAL = {"o": hx("125a2c"), "d": hx("2a9440"), "m": hx("48bc4c"),
+             "l": hx("7edc62"), "h": hx("d2fc96")}
+
+
 def _tall_grass_tile(d, x, y, frame):
-    d.rectangle([x, y, x + T - 1, y + T - 1], fill=C["tall_m"])
-    for yy in range(y, y + T, 2):                                 # dark base texture
-        for xx in range(x + (yy // 2) % 2, x + T, 3):
-            d.point([(xx, yy)], fill=C["tall_d"])
+    """Dense wild-grass patch: 2x2 leafy clumps with shadows."""
+    d.rectangle([x, y, x + T - 1, y + T - 1], fill=hx("6ccc7c"))
     sway = frame % 2
-    for row, shift in ((0, 0), (5, 4), (10, 0)):
-        for col in range(0, 16, 8):
-            bx = x + col + shift - (sway if row == 5 else 0)
-            by = y + row
-            d.line([(bx, by + 5), (bx + 1, by + 3), (bx + 2, by + 1), (bx + 3, by + 3),
-                    (bx + 4, by + 1), (bx + 5, by + 3), (bx + 6, by + 5)], fill=C["tall_d"])
-            d.line([(bx + 1, by + 5), (bx + 2, by + 2)], fill=C["tall_l"])
-            d.line([(bx + 4, by + 2), (bx + 5, by + 5)], fill=C["tall_l"])
-            d.point([(bx + 2, by + 1), (bx + 4 + sway, by + 1)], fill=C["tall_h"])
+    for cy in (0, 8):
+        for cx in (0, 8):
+            ox, oy = x + cx, y + cy
+            d.line([ox + 1, oy + 8, ox + 6, oy + 8], fill=hx("4aa860")) if oy + 8 < y + T else None
+            flip = (cx // 8 + cy // 8) % 2 == 1
+            for j, row in enumerate(CLUMP):
+                if flip:
+                    row = row[::-1]
+                shift = sway if j < 2 else 0
+                for i, ch in enumerate(row):
+                    if ch == ".":
+                        continue
+                    px = ox + min(7, i + shift)
+                    d.point([(px, oy + j)], fill=CLUMP_PAL[ch])
 
 
 def _cliff(img, x0, x1, y):
